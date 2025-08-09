@@ -101,3 +101,70 @@ print("Testing set shape:", X_test.shape, y_test.shape)
 
 #Checking the ranges of our features column
 print(X.describe())
+
+
+
+
+
+
+"""Visualization Correlation Heatmap
+Purpose: Identify relationships between numeric features.
+"""
+
+import seaborn as sns
+plt.figure(figsize=(8, 6))
+sns.heatmap(X.corr(), annot=True, cmap="coolwarm")
+plt.title("Correlation Heatmap")
+plt.show()
+
+"""Here, after looking at the ranges (min and max values) of our features columns, we can see the difference in maximum value is different in different columns . So we have to do sclaing here as Scaling will ensure that all features contribute equally to the distance calculations in KNN."""
+
+#Here Scaling the data of my features columns as
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+# Initialize KNN model
+knn = KNeighborsClassifier(n_neighbors=5)
+
+# Train the model
+knn.fit(X_train, y_train)
+
+# Make predictions on test set
+y_pred = knn.predict(X_test)
+
+# Evaluate the model
+Knn_accuracy = accuracy_score(y_test, y_pred)
+print(f"Model Accuracy: {Knn_accuracy:.2f}")
+
+
+
+
+
+
+
+# Function to recommend recipes
+def recommend_recipes(user_input, n_recommendations=5):
+    # Scale the input using the same scaler
+    scaled_input = scaler.transform([user_input])
+
+    # Find the k nearest neighbors
+    distances, indices = knn.kneighbors(scaled_input, n_neighbors=n_recommendations)
+
+    # Get the recommended recipe names
+    recommendations = y[indices[0]]
+
+    return recommendations
+
+# Example usage:
+# sample_input = [recipe_number, user_reputation, reply_count, thumbs_up, thumbs_down, stars, best_score]
+sample_input = [1, 600, 2, 10, 1, 4, 8]
+recommendations = recommend_recipes(sample_input)
+print("\nRecommended Recipes:")
+for i, recipe in enumerate(recommendations, 1):
+    print(f"{i}. {recipe}")
