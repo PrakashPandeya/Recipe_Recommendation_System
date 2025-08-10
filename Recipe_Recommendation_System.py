@@ -168,3 +168,60 @@ recommendations = recommend_recipes(sample_input)
 print("\nRecommended Recipes:")
 for i, recipe in enumerate(recommendations, 1):
     print(f"{i}. {recipe}")
+
+
+
+"""Using Next Algortihm - Random Forest using the same Features and Target.
+
+We used Random Forest because Random Forest can enhance predictions, especially for multi-class classification problems (e.g., predicting a specific recipe name).
+"""
+
+#importing necessary libraries
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Initializing the Random Forest Classifier
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+
+# Training the model
+rf.fit(X_train, y_train)
+
+# Predict on the test set
+y_pred_rf = rf.predict(X_test)
+
+
+
+
+
+# Evaluate performance
+print("Random Forest Accuracy:", accuracy_score(y_test, y_pred_rf))
+from sklearn.metrics import classification_report
+
+print(classification_report(y_test, y_pred_rf))  # For Random Forest
+
+
+
+models = ['KNN', 'Random Forest']
+accuracies = [Knn_accuracy, accuracy_score(y_test, y_pred_rf)]
+plt.bar(models, accuracies, color=['blue', 'green'], edgecolor='black')
+plt.title("Model Accuracy Comparison", fontsize=14)
+plt.ylabel("Accuracy", fontsize=12)
+plt.ylim(0, 1)
+plt.show()
+
+# One advantage of Random Forest is that it can show feature importance
+feature_importance = pd.DataFrame({
+    'feature': features,
+    'importance': rf.feature_importances_
+})
+print("\nFeature Importance:")
+print(feature_importance.sort_values('importance', ascending=False))
+
+
+feature_importance = feature_importance.sort_values('importance', ascending=True)
+plt.figure(figsize=(8, 6))
+plt.barh(feature_importance['feature'], feature_importance['importance'], color='lightcoral', edgecolor='black')
+plt.title("Feature Importance (Random Forest)", fontsize=14)
+plt.xlabel("Importance", fontsize=12)
+plt.ylabel("Features", fontsize=12)
+plt.show()
