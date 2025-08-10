@@ -225,3 +225,29 @@ plt.title("Feature Importance (Random Forest)", fontsize=14)
 plt.xlabel("Importance", fontsize=12)
 plt.ylabel("Features", fontsize=12)
 plt.show()
+
+
+
+# Function to recommend recipes using Random Forest
+def recommend_recipes_rf(user_input, n_recommendations=5):
+    # Scale the input using the same scaler
+    scaled_input = scaler.transform([user_input])
+
+    # Get probability predictions for all classes
+    probabilities = rf.predict_proba(scaled_input)
+
+    # Get top N recipe indices
+    top_n_indices = np.argsort(probabilities[0])[-n_recommendations:][::-1]
+
+    # Get the recommended recipe names
+    recommendations = [rf.classes_[idx] for idx in top_n_indices]
+
+    return recommendations
+
+# Example usage:
+# sample_input = [recipe_number, user_reputation, reply_count, thumbs_up, thumbs_down, stars, best_score]
+sample_input = [1, 100, 2, 10, 1, 4, 800]
+recommendations = recommend_recipes_rf(sample_input)
+print("\nRecommended Recipes:")
+for i, recipe in enumerate(recommendations, 1):
+    print(f"{i}. {recipe}")
