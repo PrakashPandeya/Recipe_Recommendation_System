@@ -251,3 +251,45 @@ recommendations = recommend_recipes_rf(sample_input)
 print("\nRecommended Recipes:")
 for i, recipe in enumerate(recommendations, 1):
     print(f"{i}. {recipe}")
+
+
+"""Now, Using the Next Algorithm, K_means Clustering. it is used to group similar data points. It helps cluster recipes or users based on their features (e.g., thumbs_up, stars, etc.), enabling recommendations within a cluster."""
+
+#importing necessary Libraries
+from sklearn.cluster import KMeans
+
+# Initializing KMeans with a predefined number of clusters
+kmeans = KMeans(n_clusters=5, random_state=42)
+
+# Fitting the model to the data
+kmeans.fit(X)
+
+# Assigning clusters to each recipe
+clusters = kmeans.labels_
+training_data['Cluster'] = clusters
+
+# Displaying the random with cluster information
+print(training_data.sample(10))
+
+plt.figure(figsize=(10, 8))
+for cluster_id in training_data['Cluster'].unique():
+    cluster_data = training_data[training_data['Cluster'] == cluster_id]
+    plt.scatter(cluster_data['thumbs_up'], cluster_data['stars'], label=f'Cluster {cluster_id}', s=50)
+plt.title("K-Means Clustering of Recipes", fontsize=14)
+plt.xlabel("Thumbs Up", fontsize=12)
+plt.ylabel("Stars", fontsize=12)
+plt.legend()
+plt.show()
+
+distortions = []
+for k in range(1, 10):
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(X)
+    distortions.append(kmeans.inertia_)
+
+plt.figure(figsize=(8, 5))
+plt.plot(range(1, 10), distortions, marker='o', linestyle='--', color='purple')
+plt.title("Elbow Method for Optimal Clusters", fontsize=14)
+plt.xlabel("Number of Clusters", fontsize=12)
+plt.ylabel("Distortion", fontsize=12)
+plt.show()
