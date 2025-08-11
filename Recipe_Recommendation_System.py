@@ -293,3 +293,33 @@ plt.title("Elbow Method for Optimal Clusters", fontsize=14)
 plt.xlabel("Number of Clusters", fontsize=12)
 plt.ylabel("Distortion", fontsize=12)
 plt.show()
+
+
+# Example Recommendation:
+# Find all recipes in the same cluster as a user's liked recipe
+liked_recipe = training_data[training_data['recipe_name'] == 'Seafood Lasagna']
+cluster_id = liked_recipe['Cluster'].values[0]
+recommendations = training_data[training_data['Cluster'] == cluster_id]
+print("Recommended Recipes in the same cluster:\n", recommendations[['recipe_name']])
+
+from sklearn.metrics import silhouette_score
+
+silhouette_scores = []
+for k in range(2, 10):
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(X)
+    silhouette_scores.append(silhouette_score(X, kmeans.labels_))
+plt.figure(figsize=(8, 5))
+plt.plot(range(2, 10), silhouette_scores, marker='o', linestyle='--', color='purple')
+plt.title("Silhouette Scores for KMeans Clustering")
+plt.xlabel("Number of Clusters")
+plt.ylabel("Silhouette Score")
+plt.show()
+
+
+
+sample_input = [1, 600, 2, 10, 1, 4, 8]
+recommendations = recommend_recipes(sample_input)
+print("\nRecommended Recipes:")
+for i, recipe in enumerate(recommendations, 1):
+    print(f"{i}. {recipe}")
